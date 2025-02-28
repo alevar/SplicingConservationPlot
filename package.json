@@ -1,6 +1,6 @@
 {
-  "name": "splicingvariation",
-  "homepage": "https://alevar.github.io/SplicingVariationPlot",
+  "name": "splicingconservation",
+  "homepage": "https://alevar.github.io/SplicingConservationPlot",
   "private": true,
   "version": "0.0.0",
   "type": "module",
