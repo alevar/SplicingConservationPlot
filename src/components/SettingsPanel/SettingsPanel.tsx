@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Form, OverlayTrigger, Overlay, Button, Tooltip } from "react-bootstrap";
+import { Card, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { InfoCircle } from "react-bootstrap-icons";
 import "./SettingsPanel.css";
 
