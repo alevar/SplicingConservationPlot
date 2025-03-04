@@ -4,6 +4,7 @@ import {
     Transcriptome,
     SJFile,
     SJData,
+    SJLine,
     BedFile,
     BedData,
     D3Grid,
@@ -12,17 +13,15 @@ import {
     TranscriptomePlot,
     TranscriptomePlotLabels,
     BarPlot,
+    SequenceLogo,
     DataPlotArray,
     TriangleConnector
 } from 'sparrowgenomelib';
-
-import { SequenceLogo } from './SequenceLogo';
 
 interface SplicePlotData {
     transcriptome: Transcriptome;
     conservationBedFile: BedFile;
     sjFiles: { donors: SJFile, acceptors: SJFile };
-    zoomWidth: number;
     zoomWindowWidth: number;
     width: number;
     height: number;
@@ -35,8 +34,6 @@ export class SplicePlot {
     private height: number;
     private fontSize: number;
     private zoomWindowWidth: number;
-    // @ts-ignore
-    private zoomWidth: number;
     private transcriptome: Transcriptome = new Transcriptome();
     private conservationBedFile: BedFile = {
         data: new BedData(),
@@ -75,7 +72,6 @@ export class SplicePlot {
         this.fontSize = data.fontSize;
 
         this.zoomWindowWidth = data.zoomWindowWidth;
-        this.zoomWidth = data.zoomWidth;
 
         this.transcriptome = data.transcriptome;
         this.conservationBedFile = data.conservationBedFile;
@@ -276,12 +272,22 @@ if (donor_dataPlotArraySvg) {
 
             // Extract subset of SJ data around the donor position
             const windowSize = 5; // ±5 positions around the donor
-            const sjSubset = {
-                data: this.sjFiles.donors.data.getData().filter(d =>
-                    d.position >= donor - windowSize &&
-                    d.position <= donor + windowSize
-                )
-            };
+
+            let sjSubset = new SJData();
+            for (const sj of this.sjFiles.donors.data.getData()) {
+                if (sj.position >= donor - windowSize && sj.position <= donor + windowSize) {
+                    const sjLine: SJLine = {
+                        seqid: sj.seqid,
+                        position: sj.position,
+                        A: sj.A,
+                        C: sj.C,
+                        G: sj.G,
+                        T: sj.T,
+                        N: sj.N,
+                    };
+                    sjSubset.addLine(sjLine);
+                }
+            }
 
             const xScale = d3.scaleLinear()
                 .domain([donor - windowSize, donor + windowSize])
@@ -413,12 +419,21 @@ if (donor_dataPlotArraySvg) {
 
                     // Extract subset of SJ data around the acceptor position
                     const windowSize = 5; // ±5 positions around the acceptor
-                    const sjSubset = {
-                        data: this.sjFiles.acceptors.data.getData().filter(d =>
-                            d.position >= acceptor - windowSize &&
-                            d.position <= acceptor + windowSize
-                        )
-                    };
+                    let sjSubset = new SJData();
+                    for (const sj of this.sjFiles.acceptors.data.getData()) {
+                        if (sj.position >= acceptor - windowSize && sj.position <= acceptor + windowSize) {
+                            const sjLine: SJLine = {
+                                seqid: sj.seqid,
+                                position: sj.position,
+                                A: sj.A,
+                                C: sj.C,
+                                G: sj.G,
+                                T: sj.T,
+                                N: sj.N,
+                            };
+                            sjSubset.addLine(sjLine);
+                        }
+                    }
 
                     const xScale = d3.scaleLinear()
                         .domain([acceptor - windowSize, acceptor + windowSize])

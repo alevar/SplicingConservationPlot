@@ -6,57 +6,7 @@ import SettingsPanel from "../SettingsPanel/SettingsPanel";
 import ErrorModal from "../ErrorModal/ErrorModal";
 import SplicePlotWrapper from "../SplicePlot/SplicePlotWrapper";
 
-import { SJFile, SJLine, SJData, parseBed, BedFile, BedData, Transcriptome } from 'sparrowgenomelib';
-
-function parseSJ(sjFileName: File): Promise<SJFile> {
-    return new Promise((resolve, reject) => {
-        const sjFile: SJFile = {
-            data: new SJData(),
-            fileName: sjFileName.name,
-            status: 1,
-        };
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const result = e.target?.result as string;
-                const lines = result.split('\n');
-                // skip header line
-                lines.forEach((line, idx) => {
-                    if (idx === 0) {
-                        return;
-                    }
-                    // skip empty lines
-                    if (line.trim() === '') {
-                        return;
-                    }
-                    const fields = line.split('\t');
-                    if (fields.length === 7) {
-                        const [seqid, position, A, C, G, T, N] = fields;
-                        const sjLine: SJLine = {
-                            seqid: seqid,
-                            position: parseInt(position),
-                            A: parseInt(A),
-                            C: parseInt(C),
-                            G: parseInt(G),
-                            T: parseInt(T),
-                            N: parseInt(N),
-                        };
-                        sjFile.data.addLine(sjLine);
-                    } else {
-                        throw new Error(`Invalid line format: ${line}`);
-                    }
-                });
-                resolve(sjFile);
-            } catch (error) {
-                reject(new Error('Failed to parse SJ file'));
-            }
-        };
-        reader.onerror = () => {
-            reject(new Error('Failed to read the file'));
-        };
-        reader.readAsText(sjFileName);
-    });
-}
+import { parseSJ, SJFile, SJData, parseBed, BedFile, BedData, Transcriptome } from 'sparrowgenomelib';
 
 const Home: React.FC = () => {
     const [transcriptome, setTranscriptome] = useState<Transcriptome>(new Transcriptome());
@@ -156,7 +106,6 @@ const Home: React.FC = () => {
                     transcriptome={transcriptome}
                     conservationBedFile={conservationBedFile}
                     sjFiles={sjFiles}
-                    zoomWidth={zoomWidth}
                     zoomWindowWidth={zoomWindowWidth}
                     width={width}
                     height={height}
