@@ -12,7 +12,6 @@ import {
     TranscriptomePlot,
     TranscriptomePlotLabels,
     BarPlot,
-    LinePlot,
     DataPlotArray,
     TriangleConnector
 } from 'sparrowgenomelib';
@@ -36,6 +35,7 @@ export class SplicePlot {
     private height: number;
     private fontSize: number;
     private zoomWindowWidth: number;
+    // @ts-ignore
     private zoomWidth: number;
     private transcriptome: Transcriptome = new Transcriptome();
     private conservationBedFile: BedFile = {
