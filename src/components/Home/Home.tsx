@@ -11,10 +11,10 @@ import { parseSJ, SJFile, SJData, parseBed, BedFile, BedData, Transcriptome } fr
 const Home: React.FC = () => {
     const [transcriptome, setTranscriptome] = useState<Transcriptome>(new Transcriptome());
     const [zoomWidth, setZoomWidth] = useState<number>(5);
-    const [zoomWindowWidth, setZoomWindowWidth] = useState<number>(75);
-    const [fontSize, setFontSize] = useState<number>(10);
-    const [width, setWidth] = useState<number>(1100);
-    const [height, setHeight] = useState<number>(700);
+    const [zoomWindowWidth, setZoomWindowWidth] = useState<number>(140);
+    const [fontSize, setFontSize] = useState<number>(16);
+    const [width, setWidth] = useState<number>(1500);
+    const [height, setHeight] = useState<number>(1000);
     const [conservationBedFile, setConservationBedFile] = useState<BedFile>({data: new BedData(), fileName: "", status: 0});
     const [sjFiles, setSJFiles] = useState<{
         donors: SJFile;

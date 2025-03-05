@@ -13,10 +13,11 @@ import {
     TranscriptomePlot,
     TranscriptomePlotLabels,
     BarPlot,
-    SequenceLogo,
     DataPlotArray,
     TriangleConnector
 } from 'sparrowgenomelib';
+
+import { SequenceLogo } from './SequenceLogo';
 
 interface SplicePlotData {
     transcriptome: Transcriptome;
@@ -55,11 +56,10 @@ export class SplicePlot {
 
     private gridConfig: GridConfig = {
         columns: 3,
-        columnRatios: [0.8, 0.1, 0.1], // plot, labels, legend
+        columnRatios: [0.9, 0.1], // plot, labels, legend
         rowRatiosPerColumn: [
-            [0.1, 0.45, 0.025, 0.05, 0.025, 0.15, 0.025, 0.05, 0.025, 0.15], // pathogen, transcriptome, spacer, donor fullgenome barplot, spacer, donor expression, spacer, acceptor fullgenome barplot, spacer, acceptor expression
-            [0.1, 0.45, 0.025, 0.05, 0.025, 0.15, 0.025, 0.05, 0.025, 0.15], // pathogen, transcriptome, spacer, donor fullgenome barplot, spacer, donor expression, spacer, acceptor fullgenome barplot, spacer, acceptor expression
-            [1], // 1 row: legend
+            [0.1, 0.45, 0.025, 0.05, 0.05, 0.125, 0.025, 0.05, 0.05, 0.125], // pathogen, transcriptome, spacer, donor fullgenome barplot, spacer, donor expression, spacer, acceptor fullgenome barplot, spacer, acceptor expression
+            [0.1, 0.45, 0.025, 0.05, 0.05, 0.125, 0.025, 0.05, 0.05, 0.125], // pathogen, transcriptome, spacer, donor fullgenome barplot, spacer, donor expression, spacer, acceptor fullgenome barplot, spacer, acceptor expression
         ],
     };
     private grid: D3Grid;
@@ -230,7 +230,6 @@ if (donor_dataPlotArraySvg) {
     for (const donor of this.transcriptome.donors()) {
         donor_positions.push(donor);
     }
-    console.log("donor_positions", donor_positions);
     // sort donor positions
     donor_positions.sort((a, b) => a - b);
     const donor_dataPlotArray = new DataPlotArray({
@@ -267,15 +266,14 @@ if (donor_dataPlotArraySvg) {
                 .attr("y", 0)
                 .attr("width", donor_zoomPlotDimensions.width)
                 .attr("height", donor_zoomPlotDimensions.height)
-                .attr("fill", "#F78154")
-                .attr("fill-opacity", 0.75);
+                .attr("fill", "#F78154");
 
             // Extract subset of SJ data around the donor position
-            const windowSize = 5; // ±5 positions around the donor
+            const windowSize = 4; // ±5 positions around the donor
 
             let sjSubset = new SJData();
             for (const sj of this.sjFiles.donors.data.getData()) {
-                if (sj.position >= donor - windowSize && sj.position <= donor + windowSize) {
+                if (sj.position >= donor - (windowSize-2) && sj.position <= donor + (windowSize-1)) {
                     const sjLine: SJLine = {
                         seqid: sj.seqid,
                         position: sj.position,
@@ -290,7 +288,7 @@ if (donor_dataPlotArraySvg) {
             }
 
             const xScale = d3.scaleLinear()
-                .domain([donor - windowSize, donor + windowSize])
+                .domain([donor - (windowSize-1), donor + (windowSize)])
                 .range([0, donor_zoomPlotDimensions.width]);
 
             const sequenceLogo = new SequenceLogo(donor_zoomPlotSvg, {
@@ -378,7 +376,6 @@ if (donor_dataPlotArraySvg) {
             for (const acceptor of this.transcriptome.acceptors()) {
                 acceptor_positions.push(acceptor);
             }
-            console.log("acceptor_positions", acceptor_positions);
             // sort acceptor positions
             acceptor_positions.sort((a, b) => a - b);
             const acceptor_dataPlotArray = new DataPlotArray({
@@ -418,13 +415,13 @@ if (donor_dataPlotArraySvg) {
                         .attr("fill", "#5FAD56");
 
                     // Extract subset of SJ data around the acceptor position
-                    const windowSize = 5; // ±5 positions around the acceptor
+                    const windowSize = 4; // ±5 positions around the acceptor
                     let sjSubset = new SJData();
                     for (const sj of this.sjFiles.acceptors.data.getData()) {
-                        if (sj.position >= acceptor - windowSize && sj.position <= acceptor + windowSize) {
+                        if (sj.position >= acceptor - (windowSize) && sj.position <= acceptor + (windowSize-3)) {
                             const sjLine: SJLine = {
                                 seqid: sj.seqid,
-                                position: sj.position,
+                                position: sj.position+1,
                                 A: sj.A,
                                 C: sj.C,
                                 G: sj.G,
@@ -436,7 +433,7 @@ if (donor_dataPlotArraySvg) {
                     }
 
                     const xScale = d3.scaleLinear()
-                        .domain([acceptor - windowSize, acceptor + windowSize])
+                        .domain([acceptor - windowSize, acceptor + (windowSize-1)])
                         .range([0, acceptor_zoomPlotDimensions.width]);
 
                     const sequenceLogo = new SequenceLogo(acceptor_zoomPlotSvg, {
