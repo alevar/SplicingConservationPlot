@@ -11,6 +11,8 @@ interface SettingsPanelProps {
     donorsStatus: number;
     acceptorsStatus: number;
     onSJUpload: (type: 'donors' | 'acceptors', event: React.ChangeEvent<HTMLInputElement>) => void;
+    smoothingWindow: number;
+    onSmoothingWindowChange: (value: number) => void;
     zoomWidth: number;
     onZoomWidthChange: (value: number) => void;
     zoomWindowWidth: number;
@@ -31,6 +33,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     donorsStatus,
     acceptorsStatus,
     onSJUpload,
+    smoothingWindow,
+    onSmoothingWindowChange,
     zoomWidth,
     onZoomWidthChange,
     zoomWindowWidth,
@@ -183,6 +187,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         />
 
                         {/* Numeric input fields */}
+                        <Form.Group controlId="smoothing" className="mb-3">
+                            <Form.Label>HeatMap Smoothing Window</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={smoothingWindow}
+                                onChange={(e) => onSmoothingWindowChange(Number(e.target.value))}
+                            />
+                        </Form.Group>
+
                         <Form.Group controlId="zoomWidth" className="mb-3">
                             <Form.Label>Zoom Width</Form.Label>
                             <Form.Control

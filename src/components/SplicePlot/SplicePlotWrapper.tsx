@@ -9,6 +9,8 @@ interface SplicePlotWrapperProps {
     transcriptome: Transcriptome;
     conservationBedFile: BedFile;
     sjFiles: {donors: SJFile, acceptors: SJFile};
+    smoothingWindow: number;
+    zoomWidth: number;
     zoomWindowWidth: number;
     width: number;
     height: number;
@@ -19,6 +21,8 @@ const SplicePlotWrapper: React.FC<SplicePlotWrapperProps> = ({
     transcriptome,
     conservationBedFile,
     sjFiles: sjFiles,
+    smoothingWindow,
+    zoomWidth,
     zoomWindowWidth,
     width, 
     height, 
@@ -96,12 +100,14 @@ const SplicePlotWrapper: React.FC<SplicePlotWrapperProps> = ({
             transcriptome,
             conservationBedFile,
             sjFiles: sjFiles,
+            smoothingWindow,
+            zoomWidth,
             zoomWindowWidth,
             width, 
             height, 
             fontSize });
         splicePlot.plot();
-    }, [transcriptome, conservationBedFile, sjFiles, zoomWindowWidth, width, height, fontSize]);
+    }, [transcriptome, conservationBedFile, sjFiles, smoothingWindow, zoomWidth, zoomWindowWidth, width, height, fontSize]);
 
     return (
         <div className="plot-container" ref={containerRef}>

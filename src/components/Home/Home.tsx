@@ -10,6 +10,7 @@ import { parseSJ, SJFile, SJData, parseBed, BedFile, BedData, Transcriptome } fr
 
 const Home: React.FC = () => {
     const [transcriptome, setTranscriptome] = useState<Transcriptome>(new Transcriptome());
+    const [smoothingWindow, setSmoothingWindow] = useState<number>(100);
     const [zoomWidth, setZoomWidth] = useState<number>(5);
     const [zoomWindowWidth, setZoomWindowWidth] = useState<number>(140);
     const [fontSize, setFontSize] = useState<number>(16);
@@ -89,6 +90,8 @@ const Home: React.FC = () => {
                 donorsStatus={sjFiles.donors.status}
                 acceptorsStatus={sjFiles.acceptors.status}
                 onSJUpload={handleSJFileUpload}
+                smoothingWindow={smoothingWindow}
+                onSmoothingWindowChange={setSmoothingWindow}
                 zoomWidth={zoomWidth}
                 onZoomWidthChange={setZoomWidth}
                 zoomWindowWidth={zoomWindowWidth}
@@ -106,6 +109,8 @@ const Home: React.FC = () => {
                     transcriptome={transcriptome}
                     conservationBedFile={conservationBedFile}
                     sjFiles={sjFiles}
+                    smoothingWindow={smoothingWindow}
+                    zoomWidth={zoomWidth}
                     zoomWindowWidth={zoomWindowWidth}
                     width={width}
                     height={height}

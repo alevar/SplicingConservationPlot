@@ -23,6 +23,8 @@ interface SplicePlotData {
     transcriptome: Transcriptome;
     conservationBedFile: BedFile;
     sjFiles: { donors: SJFile, acceptors: SJFile };
+    smoothingWindow: number;
+    zoomWidth: number;
     zoomWindowWidth: number;
     width: number;
     height: number;
@@ -34,6 +36,8 @@ export class SplicePlot {
     private width: number;
     private height: number;
     private fontSize: number;
+    private smoothingWindow: number;
+    private zoomWidth: number;
     private zoomWindowWidth: number;
     private transcriptome: Transcriptome = new Transcriptome();
     private conservationBedFile: BedFile = {
@@ -70,6 +74,9 @@ export class SplicePlot {
         this.width = data.width;
         this.height = data.height;
         this.fontSize = data.fontSize;
+
+        this.smoothingWindow = data.smoothingWindow;
+        this.zoomWidth = data.zoomWidth;
 
         this.zoomWindowWidth = data.zoomWindowWidth;
 
@@ -203,7 +210,7 @@ export class SplicePlot {
                 .domain([0, this.transcriptome.getEnd()])
                 .range([0, donor_fullGenomePlotDimensions.width]);
 
-            const smooth_conservationBedData = this.conservationBedFile.data.smooth(100);
+            const smooth_conservationBedData = this.conservationBedFile.data.smooth(this.smoothingWindow);
             const donor_fullGenomePlot = new HeatMap(donor_fullGenomePlotSvg, {
                 dimensions: donor_fullGenomePlotDimensions,
                 bedData: smooth_conservationBedData,
@@ -269,11 +276,9 @@ export class SplicePlot {
                         .attr("fill", "#F78154");
 
                     // Extract subset of SJ data around the donor position
-                    const windowSize = 4; // ±5 positions around the donor
-
                     let sjSubset = new SJData();
                     for (const sj of this.sjFiles.donors.data.getData()) {
-                        if (sj.position >= donor - (windowSize - 2) && sj.position <= donor + (windowSize - 1)) {
+                        if (sj.position >= donor - (this.zoomWidth - 2) && sj.position <= donor + (this.zoomWidth - 1)) {
                             const sjLine: SJLine = {
                                 seqid: sj.seqid,
                                 position: sj.position,
@@ -288,7 +293,7 @@ export class SplicePlot {
                     }
 
                     const xScale = d3.scaleLinear()
-                        .domain([donor - (windowSize - 1), donor + (windowSize)])
+                        .domain([donor - (this.zoomWidth - 1), donor + (this.zoomWidth)])
                         .range([0, donor_zoomPlotDimensions.width]);
 
                     const sequenceLogo = new SequenceLogo(donor_zoomPlotSvg, {
@@ -385,10 +390,9 @@ export class SplicePlot {
                         .attr("fill", "#5FAD56");
 
                     // Extract subset of SJ data around the acceptor position
-                    const windowSize = 4; // ±5 positions around the acceptor
                     let sjSubset = new SJData();
                     for (const sj of this.sjFiles.acceptors.data.getData()) {
-                        if (sj.position >= acceptor - (windowSize) && sj.position <= acceptor + (windowSize - 3)) {
+                        if (sj.position >= acceptor - (this.zoomWidth) && sj.position <= acceptor + (this.zoomWidth - 3)) {
                             const sjLine: SJLine = {
                                 seqid: sj.seqid,
                                 position: sj.position + 1,
@@ -403,7 +407,7 @@ export class SplicePlot {
                     }
 
                     const xScale = d3.scaleLinear()
-                        .domain([acceptor - windowSize, acceptor + (windowSize - 1)])
+                        .domain([acceptor - this.zoomWidth, acceptor + (this.zoomWidth - 1)])
                         .range([0, acceptor_zoomPlotDimensions.width]);
 
                     const sequenceLogo = new SequenceLogo(acceptor_zoomPlotSvg, {
