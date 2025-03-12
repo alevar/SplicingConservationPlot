@@ -18,7 +18,9 @@ export class HeatMap {
   private yScale: d3.ScaleLinear<number, number>;
   private useProvidedYScale: boolean = false;
   private colorScale: d3.ScaleSequential<string>;
-  private cellHeight: number; // Property to store cell height
+  // escape tsc for unused
+  // @ts-ignore
+  private cellHeight: number;
 
   constructor(
     svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
